@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+<style> 
+
+body {
+    margin: 0;
+    font: Arial;
+}
+
+section {
+    padding: 50px 6%;
+}
+
+nav {
+    background: #272727;
+    padding: 18px;
+    width: 98%;
+    position: fixed;
+    text-align: center;
+}
+
+nav a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    margin: 0 36px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #e30c0c;
+}
+
+.hero {
+    height: 100vh;
+    background: linear-gradient(122deg, #be0909, #723230);
+    color: rgb(253, 253, 253);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fade {
+    font-size: 38px;
+    animation: fadeIn 1.6s ease-in-out;
+}
+
+.about {
+    text-align: center;
+}
+
+.about img {
+    width: 170px;
+    border-radius: 6%;
+    margin-bottom: 50px;
+    animation: fadeIn 3s;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(34px); }
+}
+
+table {
+    margin: 30px auto;
+    border-collapse: collapse;
+    width: 80%;
+}
+
+table, th, td {
+    border: 1px solid #000000;
+}
+
+th, td {
+    padding: 14px;
+}
+
+.portfolio {
+    text-align: center;
+    background: #f4f4f4;
+}
+
+.project {
+    width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    transition: transform 0.3s;
+}
+
+.project-container {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.project:hover {
+    transform: scale(1.15);
+    color: #e30c0c;
+}
+
+.contact {
+    text-align: center;
+}
+
+.contact form {
+    max-width: 540px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.contact input, .contact textarea {
+    margin-bottom: 18px;
+    padding: 11px;
+}
+
+.contact button {
+    padding: 15px;
+    background: #db1111;
+    color: white;
+    border: none;
+}
+
+.contact button:hover {
+    background: #7b0d0d;
+    color: #8b8b8b;
+}
+
+@media (max-width: 600px) {
+    nav a{
+      
+        margin: 12px 0;
+    }
+    section {
+        padding: 90px 5%;
+    }
+    .fade {
+        font-size: 24px;
+    }
+    .project {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+</style>
+</head>
+<body>
+<nav>
+    <a href="#about">About</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<section class="hero" id="home">
+    <h1 class="fade">Welcome to Portfolio Dennis Elmer</h1>
+</section> 
+
+<section class="about" id="about">
+    <h1>About Me</h1>
+    <br>
+    <br>
+    <img src="/Data/photo.jpg">
+    <p>
+        Nama saya adalah Dennis Elmer dengan NIM 2902614104 dan BNCC ID 25011206. Saat ini saya adalah mahasiswa B29 di Universitas Bina Nusantara dengan jurusan Computer Science. Hobi saya adalah ngoding di komputer dan bermain bulu tangkis.
+    </p>
+    <br>
+    <br>
+    <h2>Riwayat Pendidikan</h2>
+    <table>
+        <tr>
+            <th>Tahun</th>
+            <th>Pendidikan</th>
+        </tr>
+        <tr>
+            <td>2011</td>
+            <td>TK Chandra Kusuma</td>
+        </tr>
+        <tr>
+            <td>2013</td>
+            <td>SD Chandra Kusuma</td>
+        </tr>
+        <tr>
+            <td>2019</td>
+            <td>SMP Chandra Kusuma</td>
+        </tr>
+        <tr>
+            <td>2022</td>
+            <td>SMA Pusaka Abadi</td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <h2>Software & Bahasa Pemrograman</h2>
+    <p>C, HTML, Javascript, Pyhton</p>
+    <br>
+</section>
+
+<section class="portfolio" id="portfolio">
+    <h1>Portfolio</h1>
+    <br>
+    <br>
+    <div class="project-container">
+        <div class="project">
+            <img src="" alt="Project 1">
+            <h4>Membuat Proposal CB Pancasila mengenai "Pemerataan Pendidikan Sebagai Kunci Pembangunan Berkelanjutan</h4>
+        </div>
+
+        <div class="project">
+            <img src="" alt="Project 2">
+            <h4>Menanam Mangrove di Rawa Buaya</h4>
+        </div>
+    </div>
+    <br>
+    <br>
+</section>
+
+<section class="contact" id="contact">
+    <h1>Contact Me</h1>
+    <br>
+    <br>
+    <form>
+        <input type="text" placeholder="Nama Lengkap" required>
+        <input type="email" placeholder="Email" required>
+        <input type="url" placeholder="LinkedIn">
+        <textarea placeholder="Comment" rows="6"></textarea>
+        <button type="submit">Send</button>
+    </form>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h2>Thank you for visiting!</h2>
+</section>
+</body>
+</html>
