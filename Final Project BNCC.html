@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokoHappy</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" defer></script>
+  <style>
+    :root {
+      --happy-yellow: #FFD000;
+      --happy-orange: #FF6B2B;
+      --happy-red: #FF2D55;
+      --happy-dark: #0D0D0D;
+      --happy-dark2: #1A1A1A;
+      --happy-gray: #2A2A2A;
+      --happy-light: #F5F0E8;
+      --happy-white: #FAFAF8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--happy-dark);
+      color: var(--happy-white);
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4, h5, h6, .font-display {
+      font-family: 'Syne', sans-serif;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(3deg); }
+      66% { transform: translateY(-10px) rotate(-2deg); }
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,208,0,0.3); }
+      50% { box-shadow: 0 0 60px rgba(255,208,0,0.8), 0 0 100px rgba(255,107,43,0.4); }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @keyframes blob {
+      0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .animate-fadeInUp { animation: fadeInUp 0.7s ease forwards; }
+    .animate-fadeInLeft { animation: fadeInLeft 0.7s ease forwards; }
+    .animate-fadeInRight { animation: fadeInRight 0.7s ease forwards; }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .animate-blob { animation: blob 8s ease-in-out infinite; }
+    .animate-popIn { animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .animate-slideDown { animation: slideDown 0.4s ease forwards; }
+
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+    .delay-600 { animation-delay: 0.6s; }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--happy-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--happy-yellow); border-radius: 3px; }
+
+    /* ===== MARQUEE ===== */
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 20s linear infinite;
+    }
+
+    /* ===== BUTTON STYLES ===== */
+    .btn-primary {
+      background: var(--happy-yellow);
+      color: var(--happy-dark);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      padding: 14px 32px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--happy-orange);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .btn-primary:hover::after { transform: translateX(0); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--happy-yellow);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      padding: 14px 32px;
+      border: 2px solid var(--happy-yellow);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover {
+      background: var(--happy-yellow);
+      color: var(--happy-dark);
+    }
+
+    /* ===== CARD ===== */
+    .product-card {
+      background: var(--happy-dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-card:hover {
+      border-color: var(--happy-yellow);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(255,208,0,0.15);
+    }
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--happy-yellow), var(--happy-orange));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .product-card:hover::before { transform: scaleX(1); }
+
+    /* ===== FORM INPUT ===== */
+    .form-input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--happy-white);
+      padding: 12px 16px;
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--happy-yellow);
+      background: rgba(255,208,0,0.05);
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-box {
+      background: var(--happy-dark2);
+      border: 1px solid rgba(255,208,0,0.3);
+      max-width: 560px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* ===== NAV ===== */
+    .nav-link {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      transition: color 0.2s;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--happy-yellow); }
+
+    /* ===== ABOUT PAGE ===== */
+    .about-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    /* ===== ADMIN TABLE ===== */
+    .admin-table th {
+      background: rgba(255,208,0,0.1);
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--happy-yellow);
+      padding: 14px 16px;
+      text-align: left;
+    }
+    .admin-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+    }
+    .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 9999;
+      background: var(--happy-dark2);
+      border-left: 4px solid var(--happy-yellow);
+      padding: 16px 24px;
+      min-width: 300px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: slideDown 0.4s ease forwards;
+    }
+
+    /* ===== CART BADGE ===== */
+    .cart-badge {
+      position: absolute;
+      top: -8px; right: -8px;
+      background: var(--happy-red);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: 'Syne', sans-serif;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* ===== ABOUT FEATURE CARD ===== */
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 36px;
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      background: rgba(255,208,0,0.05);
+      border-color: rgba(255,208,0,0.3);
+      transform: translateY(-4px);
+    }
+
+    /* ===== IMAGE PLACEHOLDER ===== */
+    .img-placeholder {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== STAR ===== */
+    .stat-number {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--happy-yellow), var(--happy-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      background: rgba(255,208,0,0.1);
+      border: 1px solid rgba(255,208,0,0.3);
+      color: var(--happy-yellow);
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+    }
+
+    .divider-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,208,0,0.4), transparent);
+    }
+
+    /* scroll hidden opacity */
+    .scroll-reveal { opacity: 0; }
+    .scroll-reveal.visible { animation: fadeInUp 0.7s ease forwards; }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    /* range input */
+    input[type=number]::-webkit-inner-spin-button { opacity: 1; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, createContext, useContext } = React;
+
+const API_BASE = 'https://api.escuelajs.co/api/v1';
+
+// ==================== CONTEXT ====================
+const AppContext = createContext(null);
+
+function useApp() { return useContext(AppContext); }
+
+// ==================== TOAST ====================
+function Toast({ message, type, onClose }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 3500);
+    return () => clearTimeout(t);
+  }, []);
+  const color = type === 'success' ? '#FFD000' : type === 'error' ? '#FF2D55' : '#FF6B2B';
+  return (
+    <div className="toast" style={{ borderLeftColor: color }}>
+      <p style={{ fontFamily: 'Syne', fontWeight: 600, color, marginBottom: 4, fontSize: 13, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+        {type === 'success' ? '✓ Berhasil' : type === 'error' ? '✕ Error' : 'ℹ Info'}
+      </p>
+      <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)' }}>{message}</p>
+    </div>
+  );
+}
+
+// ==================== NAV ====================
+function Navbar({ page, setPage, user, onLogout, cartCount }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const isAdmin = user?.role === 'admin';
+
+  return (
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 500,
+      background: 'rgba(13,13,13,0.95)', backdropFilter: 'blur(12px)',
+      borderBottom: '1px solid rgba(255,255,255,0.06)',
+    }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 70 }}>
+        {/* Logo */}
+        <button onClick={() => setPage(isAdmin ? 'admin' : 'about')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+          <span className="logo-text">
+            Toko<span style={{ color: 'var(--happy-yellow)' }}>Happy</span>
+            <span style={{ color: 'var(--happy-orange)', fontSize: 28 }}>.</span>
+          </span>
+        </button>
+
+        {/* Desktop Links */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          {!isAdmin && (
+            <>
+              <button className={`nav-link ${page === 'about' ? 'active' : ''}`} onClick={() => setPage('about')}>Tentang</button>
+              <button className={`nav-link ${page === 'products' ? 'active' : ''}`} onClick={() => setPage('products')}>Produk</button>
+            </>
+          )}
+          {isAdmin && (
+            <button className={`nav-link ${page === 'admin' ? 'active' : ''}`} onClick={() => setPage('admin')}>Admin Panel</button>
+          )}
+
+          {/* Cart (member only) */}
+          {!isAdmin && (
+            <button onClick={() => setPage('cart')} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: page === 'cart' ? 'var(--happy-yellow)' : 'rgba(255,255,255,0.7)', fontSize: 20, padding: 4 }}>
+              🛒
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+            </button>
+          )}
+
+          {/* User */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 13, color: 'var(--happy-yellow)' }}>{user?.username}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{user?.role}</div>
+            </div>
+            <button onClick={onLogout} className="btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// ==================== LOGIN PAGE ====================
+function LoginPage({ onLogin }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!username.trim() || !password.trim()) {
+      setError('Username dan password wajib diisi.');
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      const role = (username.trim() === 'admin' && password.trim() === 'admin') ? 'admin' : 'member';
+      onLogin({ username: username.trim(), role });
+      setLoading(false);
+    }, 600);
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflow: 'hidden' }}>
+      {/* Background blobs */}
+      <div style={{ position: 'absolute', top: '20%', left: '10%', width: 400, height: 400, background: 'var(--happy-yellow)', borderRadius: '50%', filter: 'blur(120px)', opacity: 0.07 }} />
+      <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: 300, height: 300, background: 'var(--happy-orange)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.08 }} />
+
+      {/* Left panel */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '60px 80px', maxWidth: 600 }}>
+        <div className="animate-fadeInLeft" style={{ opacity: 0 }}>
+          <div className="tag-pill" style={{ marginBottom: 32 }}>Selamat Datang</div>
+          <h1 style={{ fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 800, lineHeight: 1.05, marginBottom: 20 }}>
+            Masuk ke<br />
+            Toko<span style={{ color: 'var(--happy-yellow)' }}>Happy</span>
+            <span style={{ color: 'var(--happy-orange)' }}>.</span>
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 18, lineHeight: 1.7, marginBottom: 48 }}>
+            Belanja ribuan produk pilihan dengan harga terbaik. Pengalaman berbelanja yang menyenangkan, setiap hari!
+          </p>
+
+          {/* features */}
+          {[
+            { icon: '🛡️', text: 'Transaksi aman & terpercaya' },
+            { icon: '🚀', text: 'Pengiriman cepat ke seluruh Indonesia' },
+            { icon: '💎', text: 'Produk premium berkualitas tinggi' },
+          ].map((f, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+              <span style={{ fontSize: 20 }}>{f.icon}</span>
+              <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: 15 }}>{f.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Right panel — form */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+        <div className="animate-fadeInRight" style={{ opacity: 0, width: '100%', maxWidth: 420 }}>
+          <div style={{ background: 'var(--happy-dark2)', border: '1px solid rgba(255,255,255,0.08)', padding: 48 }}>
+            <h2 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 28, marginBottom: 8 }}>Login</h2>
+            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, marginBottom: 36 }}>Masukkan kredensial kamu untuk melanjutkan</p>
+
+            {error && (
+              <div style={{ background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.3)', padding: '12px 16px', marginBottom: 24, color: '#FF2D55', fontSize: 14 }}>
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: 'block', fontFamily: 'Syne', fontWeight: 600, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>Username</label>
+                <input
+                  className="form-input"
+                  value={username}
+                  onChange={e => { setUsername(e.target.value); setError(''); }}
+                  placeholder="Masukkan username"
+                  autoFocus
+                />
+              </div>
+              <div style={{ marginBottom: 32 }}>
+                <label style={{ display: 'block', fontFamily: 'Syne', fontWeight: 600, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>Password</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    className="form-input"
+                    type={showPwd ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => { setPassword(e.target.value); setError(''); }}
+                    placeholder="Masukkan password"
+                    style={{ paddingRight: 48 }}
+                  />
+                  <button type="button" onClick={() => setShowPwd(!showPwd)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>
+                    {showPwd ? '🙈' : '👁️'}
+                  </button>
+                </div>
+              </div>
+              <button type="submit" className="btn-primary" style={{ width: '100%', fontSize: 15 }} disabled={loading}>
+                <span>{loading ? 'Memproses...' : 'Masuk Sekarang →'}</span>
+              </button>
+            </form>
+
+            <div style={{ marginTop: 28, padding: '16px', background: 'rgba(255,208,0,0.05)', border: '1px solid rgba(255,208,0,0.15)' }}>
+              <p style={{ fontFamily: 'Syne', fontWeight: 600, fontSize: 11, color: 'rgba(255,208,0,0.7)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Demo Credentials</p>
+              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.8 }}>
+                Admin: <strong style={{ color: 'var(--happy-yellow)' }}>admin / admin</strong><br />
+                Member: username & password apapun
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AboutPage() {
+  const features = [
+    { icon: '⚡', title: 'Pengiriman Kilat', desc: 'Pesananmu tiba dalam 1-2 hari kerja ke seluruh Indonesia, bahkan pada hari yang sama untuk area tertentu.' },
+    { icon: '🛡️', title: 'Belanja Aman', desc: 'Sistem keamanan berlapis melindungi setiap transaksimu. Uangmu dijamin kembali jika ada masalah.' },
+    { icon: '💬', title: 'CS 24/7', desc: 'Tim customer service kami siap membantu kamu kapanpun dibutuhkan, setiap hari tanpa terkecuali.' },
+    { icon: '🎁', title: 'Promo Eksklusif', desc: 'Dapatkan penawaran spesial, flash sale, dan diskon eksklusif setiap harinya khusus untuk member setia.' },
+    { icon: '♻️', title: 'Ramah Lingkungan', desc: 'Kemasan kami menggunakan bahan daur ulang. Kami berkomitmen menjaga bumi untuk generasi mendatang.' },
+    { icon: '⭐', title: 'Produk Terkurasi', desc: 'Setiap produk melewati seleksi ketat untuk memastikan kualitas terbaik sampai ke tanganmu.' },
+  ];
+
+  const stats = [
+    { number: '2M+', label: 'Pelanggan Puas' },
+    { number: '50K+', label: 'Produk Tersedia' },
+    { number: '99%', label: 'Kepuasan Customer' },
+    { number: '5★', label: 'Rating Rata-rata' },
+  ];
+
+  const team = [
+    { name: 'Noa Prabowo', role: 'CEO & Founder', emoji: '👨‍💼' },
+    { name: 'Sari Dewi', role: 'Head of Operations', emoji: '👩‍💻' },
+    { name: 'Rizki Pratama', role: 'Lead Developer', emoji: '👨‍🔧' },
+    { name: 'Maya Indah', role: 'Creative Director', emoji: '👩‍🎨' },
+  ];
+
+  return (
+    <div style={{ paddingTop: 70 }}>
+      {/* ── HERO SECTION ── */}
+      <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden', padding: '80px 40px' }}>
+        {/* Animated blobs */}
+        <div className="about-blob animate-blob" style={{ width: 600, height: 600, background: 'var(--happy-yellow)', top: '-100px', right: '-100px' }} />
+        <div className="about-blob animate-blob delay-300" style={{ width: 400, height: 400, background: 'var(--happy-orange)', bottom: '0px', left: '-80px', animationDelay: '2s' }} />
+
+        {/* Spinning circle deco */}
+        <div className="animate-spin-slow" style={{
+          position: 'absolute', right: '8%', top: '50%', transform: 'translateY(-50%)',
+          width: 280, height: 280,
+          border: '1px solid rgba(255,208,0,0.2)',
+          borderRadius: '50%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{ width: 220, height: 220, border: '1px dashed rgba(255,208,0,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 64, color: 'var(--happy-yellow)', opacity: 0.5 }}>🛍️</div>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
+          <div className="animate-fadeInUp" style={{ opacity: 0, maxWidth: 700 }}>
+            <div className="tag-pill" style={{ marginBottom: 28 }}>🎉 Tentang Kami</div>
+            <h1 style={{ fontSize: 'clamp(52px, 7vw, 110px)', fontWeight: 800, lineHeight: 0.95, letterSpacing: '-0.03em', marginBottom: 32 }}>
+              Belanja<br />
+              <span style={{ color: 'var(--happy-yellow)' }}>Lebih</span><br />
+              <span style={{ WebkitTextStroke: '2px rgba(255,255,255,0.3)', color: 'transparent' }}>Happy.</span>
+            </h1>
+          </div>
+          <div className="animate-fadeInUp delay-200" style={{ opacity: 0, maxWidth: 560 }}>
+            <p style={{ fontSize: 20, color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, marginBottom: 48 }}>
+              TokoHappy adalah platform e-commerce terkemuka di Indonesia yang menghadirkan pengalaman belanja online yang menyenangkan, aman, dan terpercaya sejak 2020.
+            </p>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+              <button className="btn-primary" style={{ fontSize: 15 }}><span>Mulai Belanja →</span></button>
+              <button className="btn-outline" style={{ fontSize: 15 }}>Pelajari Lebih Lanjut</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── MARQUEE ── */}
+      <div style={{ background: 'var(--happy-yellow)', padding: '18px 0', overflow: 'hidden' }}>
+        <div className="marquee-track">
+          {[...Array(3)].map((_, rep) => (
+            ['BELANJA HEMAT', '✦', 'PRODUK PREMIUM', '✦', 'PENGIRIMAN CEPAT', '✦', 'PROMO SETIAP HARI', '✦', 'TERPERCAYA', '✦'].map((t, i) => (
+              <span key={`${rep}-${i}`} style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 15, color: 'var(--happy-dark)', letterSpacing: '0.1em', marginRight: 48, whiteSpace: 'nowrap' }}>{t}</span>
+            ))
+          ))}
+        </div>
+      </div>
+
+      {/* ── STATS ── */}
+      <section style={{ padding: '100px 40px', background: 'var(--happy-dark2)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 40 }}>
+            {stats.map((s, i) => (
+              <div key={i} style={{ textAlign: 'center', padding: '40px 20px', position: 'relative' }}>
+                <div className="stat-number">{s.number}</div>
+                <div style={{ fontFamily: 'Syne', fontWeight: 600, fontSize: 14, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12 }}>{s.label}</div>
+                {i < stats.length - 1 && (
+                  <div style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: 1, height: 60, background: 'rgba(255,255,255,0.1)' }} className="hide-mobile" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── STORY SECTION ── */}
+      <section style={{ padding: '100px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+          <div>
+            <div className="tag-pill" style={{ marginBottom: 24 }}>Cerita Kami</div>
+            <h2 style={{ fontSize: 'clamp(36px, 4vw, 60px)', fontWeight: 800, lineHeight: 1.1, marginBottom: 28 }}>
+              Lahir dari semangat <span style={{ color: 'var(--happy-yellow)' }}>inovasi</span> & <span style={{ color: 'var(--happy-orange)' }}>kepedulian</span>
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 17, lineHeight: 1.8, marginBottom: 24 }}>
+              TokoHappy lahir pada tahun 2020 dengan satu visi sederhana: membuat belanja online menjadi pengalaman yang benar-benar menyenangkan. Kami percaya bahwa setiap orang berhak mendapatkan produk berkualitas dengan harga yang adil.
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 17, lineHeight: 1.8 }}>
+              Diprakarsai oleh Pak Noa dan tim kecil yang passionate, kami berkembang dari sebuah startup kecil menjadi platform yang dipercaya jutaan pelanggan di seluruh nusantara.
+            </p>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <div className="animate-blob" style={{ width: '100%', aspectRatio: '1', background: 'linear-gradient(135deg, rgba(255,208,0,0.15), rgba(255,107,43,0.1))', border: '1px solid rgba(255,208,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 120 }}>
+              🏪
+            </div>
+            <div style={{ position: 'absolute', bottom: -20, right: -20, background: 'var(--happy-yellow)', padding: '20px 28px' }}>
+              <div style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 36, color: 'var(--happy-dark)' }}>4+</div>
+              <div style={{ fontFamily: 'Syne', fontWeight: 600, fontSize: 13, color: 'var(--happy-dark)', opacity: 0.7 }}>TAHUN BERDIRI</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURES ── */}
+      <section style={{ padding: '80px 40px', background: 'var(--happy-dark2)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
+            <div className="tag-pill" style={{ marginBottom: 20 }}>Keunggulan Kami</div>
+            <h2 style={{ fontSize: 'clamp(36px, 4vw, 56px)', fontWeight: 800 }}>
+              Mengapa Memilih <span style={{ color: 'var(--happy-yellow)' }}>TokoHappy?</span>
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
+            {features.map((f, i) => (
+              <div key={i} className="feature-card" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div style={{ fontSize: 40, marginBottom: 20 }}>{f.icon}</div>
+                <h3 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 20, marginBottom: 12 }}>{f.title}</h3>
+                <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 15, lineHeight: 1.7 }}>{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TEAM ── */}
+      <section style={{ padding: '100px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
+            <div className="tag-pill" style={{ marginBottom: 20 }}>Tim Kami</div>
+            <h2 style={{ fontSize: 'clamp(36px, 4vw, 56px)', fontWeight: 800 }}>
+              Orang-orang di balik <span style={{ color: 'var(--happy-yellow)' }}>TokoHappy</span>
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24 }}>
+            {team.map((m, i) => (
+              <div key={i} style={{ textAlign: 'center', padding: '40px 24px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', transition: 'all 0.3s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,208,0,0.3)'; e.currentTarget.style.background = 'rgba(255,208,0,0.03)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}>
+                <div style={{ fontSize: 64, marginBottom: 20 }}>{m.emoji}</div>
+                <h3 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 18, marginBottom: 6 }}>{m.name}</h3>
+                <p style={{ color: 'var(--happy-yellow)', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{m.role}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section style={{ padding: '100px 40px', background: 'linear-gradient(135deg, rgba(255,208,0,0.08), rgba(255,107,43,0.05))', borderTop: '1px solid rgba(255,208,0,0.15)', textAlign: 'center' }}>
+        <div className="animate-pulse-glow" style={{ display: 'inline-block', marginBottom: 40, borderRadius: '50%', padding: 24 }}>
+          <div style={{ fontSize: 72 }}>🛍️</div>
+        </div>
+        <h2 style={{ fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 800, lineHeight: 1.1, marginBottom: 24 }}>
+          Siap untuk<br /><span style={{ color: 'var(--happy-yellow)' }}>Belanja Happy?</span>
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 18, maxWidth: 500, margin: '0 auto 48px' }}>
+          Ribuan produk menunggumu. Temukan penawaran terbaik dan nikmati pengalaman belanja yang menyenangkan!
+        </p>
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button className="btn-primary" style={{ fontSize: 16, padding: '18px 48px' }}><span>Mulai Belanja Sekarang →</span></button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ padding: '40px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+        <span className="logo-text" style={{ fontSize: 18 }}>Toko<span style={{ color: 'var(--happy-yellow)' }}>Happy</span><span style={{ color: 'var(--happy-orange)' }}>.</span></span>
+        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>© 2025 TokoHappy. Hak Cipta Dilindungi.</p>
+      </footer>
+    </div>
+  );
+}
+
+function ProductCard({ product, onAddToCart, isAdmin }) {
+  const [qty, setQty] = useState(1);
+  const [adding, setAdding] = useState(false);
+
+  const imgSrc = Array.isArray(product.images) && product.images[0]
+    ? product.images[0].startsWith('[') ? 'https://placehold.co/400x300/1A1A1A/FFD000?text=Product' : product.images[0]
+    : 'https://placehold.co/400x300/1A1A1A/FFD000?text=Product';
+
+  function handleAdd() {
+    if (qty < 1) return;
+    setAdding(true);
+    onAddToCart(product, qty);
+    setTimeout(() => setAdding(false), 800);
+  }
+
+  return (
+    <div className="product-card">
+      <div style={{ position: 'relative', paddingTop: '66%', overflow: 'hidden' }}>
+        <img
+          src={imgSrc}
+          alt={product.title}
+          onError={e => { e.target.src = 'https://placehold.co/400x300/1A1A1A/FFD000?text=Product'; }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+          onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
+          onMouseLeave={e => e.target.style.transform = 'scale(1)'}
+        />
+        <div style={{ position: 'absolute', top: 12, left: 12 }}>
+          <span style={{ background: 'var(--happy-dark)', border: '1px solid rgba(255,208,0,0.3)', color: 'var(--happy-yellow)', fontFamily: 'Syne', fontSize: 11, fontWeight: 700, padding: '4px 10px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            {product.category?.name || 'General'}
+          </span>
+        </div>
+      </div>
+
+      <div style={{ padding: '20px' }}>
+        <h3 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 16, marginBottom: 8, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          {product.title}
+        </h3>
+        <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.6, marginBottom: 16, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          {product.description}
+        </p>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <span style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 22, color: 'var(--happy-yellow)' }}>
+            ${product.price?.toLocaleString()}
+          </span>
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', fontFamily: 'Syne', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            ID: {product.id}
+          </span>
+        </div>
+
+        {!isAdmin && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', border: '1px solid rgba(255,255,255,0.1)', flex: '0 0 auto' }}>
+              <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ width: 36, height: 36, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 16, fontFamily: 'Syne' }}>−</button>
+              <span style={{ width: 36, textAlign: 'center', fontFamily: 'Syne', fontWeight: 700, fontSize: 14 }}>{qty}</span>
+              <button onClick={() => setQty(q => q + 1)} style={{ width: 36, height: 36, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 16, fontFamily: 'Syne' }}>+</button>
+            </div>
+            <button className="btn-primary" onClick={handleAdd} style={{ flex: 1, fontSize: 13, padding: '10px 16px' }} disabled={adding}>
+              <span>{adding ? '✓ Ditambahkan' : '+ Keranjang'}</span>
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProductsPage({ onAddToCart }) {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const limit = 12;
+
+  async function fetchProducts() {
+    setLoading(true);
+    setError('');
+    try {
+      const offset = (page - 1) * limit;
+      const res = await fetch(`${API_BASE}/products?offset=${offset}&limit=${limit}`);
+      if (!res.ok) throw new Error('Gagal memuat produk');
+      const data = await res.json();
+      setProducts(data);
+    } catch (e) {
+      setError('Gagal memuat produk. Silakan coba lagi.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { fetchProducts(); }, [page]);
+
+  const filtered = products.filter(p =>
+    p.title?.toLowerCase().includes(search.toLowerCase()) ||
+    p.category?.name?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div style={{ paddingTop: 70, minHeight: '100vh' }}>
+      {/* Header */}
+      <div style={{ padding: '60px 40px 40px', background: 'linear-gradient(180deg, rgba(255,208,0,0.05) 0%, transparent 100%)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div className="tag-pill" style={{ marginBottom: 16 }}>🛒 Katalog Produk</div>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24 }}>
+            <h1 style={{ fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 800, lineHeight: 1 }}>
+              Semua <span style={{ color: 'var(--happy-yellow)' }}>Produk</span>
+            </h1>
+            <div style={{ position: 'relative', flex: '0 0 auto', minWidth: 280 }}>
+              <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 16 }}>🔍</span>
+              <input
+                className="form-input"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Cari produk atau kategori..."
+                style={{ paddingLeft: 42 }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px' }}>
+        {loading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 24 }}>
+            {[...Array(8)].map((_, i) => (
+              <div key={i} style={{ background: 'var(--happy-dark2)', height: 380, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%)', animation: 'marquee 1.5s linear infinite', width: '200%' }} />
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+            <div style={{ fontSize: 64, marginBottom: 20 }}>⚠️</div>
+            <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{error}</p>
+            <button className="btn-primary" onClick={fetchProducts}><span>Coba Lagi</span></button>
+          </div>
+        ) : (
+          <>
+            {filtered.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+                <div style={{ fontSize: 64, marginBottom: 20 }}>🔍</div>
+                <p style={{ color: 'rgba(255,255,255,0.5)' }}>Produk tidak ditemukan untuk "{search}"</p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 24, marginBottom: 48 }}>
+                {filtered.map((p, i) => (
+                  <div key={p.id} className="animate-fadeInUp" style={{ opacity: 0, animationDelay: `${Math.min(i, 7) * 0.07}s` }}>
+                    <ProductCard product={p} onAddToCart={onAddToCart} isAdmin={false} />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {!search && (
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+                <button className="btn-outline" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: '10px 24px' }}>← Sebelumnya</button>
+                <div style={{ background: 'var(--happy-yellow)', color: 'var(--happy-dark)', fontFamily: 'Syne', fontWeight: 700, padding: '10px 20px', minWidth: 48, textAlign: 'center' }}>
+                  {page}
+                </div>
+                <button className="btn-outline" onClick={() => setPage(p => p + 1)} disabled={products.length < limit} style={{ padding: '10px 24px' }}>Berikutnya →</button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CartPage({ cart, setCart, user, onCheckoutSuccess, showToast }) {
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [form, setForm] = useState({
+    username: user?.username || '',
+    fullName: '',
+    phone: '',
+    email: '',
+    address: '',
+    bankAccount: '',
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  function removeItem(id) {
+    setCart(c => c.filter(i => i.id !== id));
+  }
+  function updateQty(id, newQty) {
+    if (newQty < 1) return;
+    setCart(c => c.map(i => i.id === id ? { ...i, qty: newQty } : i));
+  }
+
+  function validate() {
+    const errs = {};
+    if (!form.username.trim()) errs.username = 'Wajib diisi';
+    if (!form.fullName.trim()) errs.fullName = 'Wajib diisi';
+    if (!form.phone.trim()) errs.phone = 'Wajib diisi';
+    else if (!/^[0-9+\-\s]{8,}$/.test(form.phone.trim())) errs.phone = 'Nomor tidak valid';
+    if (!form.email.trim()) errs.email = 'Wajib diisi';
+    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = 'Email tidak valid';
+    if (!form.address.trim()) errs.address = 'Wajib diisi';
+    if (!form.bankAccount.trim()) errs.bankAccount = 'Wajib diisi';
+    return errs;
+  }
+
+  function handleCheckout(e) {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setFormErrors(errs); return; }
+    const totalStr = `$${total.toLocaleString()}`;
+    setSuccessMsg(`Transaction success by ${form.fullName} with total price ${totalStr}.`);
+  }
+
+  function handleDismissSuccess() {
+    setSuccessMsg('');
+    setShowCheckout(false);
+    setCart([]);
+    onCheckoutSuccess();
+  }
+
+  const inputF = (key, label, type = 'text') => (
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ display: 'block', fontFamily: 'Syne', fontWeight: 600, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>{label}</label>
+      <input
+        className="form-input"
+        type={type}
+        value={form[key]}
+        onChange={e => { setForm(f => ({ ...f, [key]: e.target.value })); setFormErrors(fe => ({ ...fe, [key]: '' })); }}
+        readOnly={key === 'username'}
+        style={key === 'username' ? { opacity: 0.6, cursor: 'default' } : {}}
+        placeholder={`Masukkan ${label.toLowerCase()}`}
+      />
+      {formErrors[key] && <p style={{ color: '#FF2D55', fontSize: 12, marginTop: 6 }}>⚠ {formErrors[key]}</p>}
+    </div>
+  );
+
+  if (cart.length === 0 && !showCheckout) {
+    return (
+      <div style={{ paddingTop: 70, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 24 }}>
+        <div style={{ fontSize: 80 }}>🛒</div>
+        <h2 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 28, color: 'rgba(255,255,255,0.8)' }}>Keranjangmu kosong</h2>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Tambahkan produk favoritmu ke keranjang!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ paddingTop: 70, minHeight: '100vh' }}>
+      {/* Success Popup */}
+      {successMsg && (
+        <div className="modal-overlay">
+          <div className="modal-box animate-popIn" style={{ padding: 48, textAlign: 'center' }}>
+            <div style={{ fontSize: 72, marginBottom: 24 }}>🎉</div>
+            <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 28, marginBottom: 20, color: 'var(--happy-yellow)' }}>Transaksi Berhasil!</h2>
+            <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 16, lineHeight: 1.7, marginBottom: 32 }}>{successMsg}</p>
+            <button className="btn-primary" onClick={handleDismissSuccess} style={{ fontSize: 15, width: '100%' }}>
+              <span>Kembali ke Beranda →</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px' }}>
+        <div style={{ marginBottom: 40 }}>
+          <div className="tag-pill" style={{ marginBottom: 16 }}>🛒 Keranjang Belanja</div>
+          <h1 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 'clamp(32px, 4vw, 56px)' }}>
+            Keranjang <span style={{ color: 'var(--happy-yellow)' }}>Kamu</span>
+          </h1>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 40, alignItems: 'start' }}>
+          {/* Items */}
+          <div>
+            {cart.map(item => {
+              const imgSrc = Array.isArray(item.images) && item.images[0]
+                ? item.images[0].startsWith('[') ? 'https://placehold.co/100x100/1A1A1A/FFD000?text=P' : item.images[0]
+                : 'https://placehold.co/100x100/1A1A1A/FFD000?text=P';
+              return (
+                <div key={item.id} style={{ display: 'flex', gap: 20, padding: '20px', marginBottom: 16, background: 'var(--happy-dark2)', border: '1px solid rgba(255,255,255,0.06)', transition: 'border-color 0.2s' }}>
+                  <img src={imgSrc} alt={item.title} onError={e => e.target.src = 'https://placehold.co/100x100/1A1A1A/FFD000?text=P'} style={{ width: 100, height: 100, objectFit: 'cover', flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{item.title}</h3>
+                    <p style={{ color: 'var(--happy-yellow)', fontFamily: 'Syne', fontWeight: 700, fontSize: 18, marginBottom: 12 }}>${item.price?.toLocaleString()}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <button onClick={() => updateQty(item.id, item.qty - 1)} style={{ width: 36, height: 36, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontFamily: 'Syne', fontSize: 18 }}>−</button>
+                        <span style={{ width: 40, textAlign: 'center', fontFamily: 'Syne', fontWeight: 700 }}>{item.qty}</span>
+                        <button onClick={() => updateQty(item.id, item.qty + 1)} style={{ width: 36, height: 36, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontFamily: 'Syne', fontSize: 18 }}>+</button>
+                      </div>
+                      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>= ${(item.price * item.qty).toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <button onClick={() => removeItem(item.id)} style={{ alignSelf: 'flex-start', background: 'none', border: 'none', color: '#FF2D55', cursor: 'pointer', fontSize: 18, padding: 4 }}>✕</button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Summary */}
+          <div style={{ position: 'sticky', top: 90 }}>
+            <div style={{ background: 'var(--happy-dark2)', border: '1px solid rgba(255,208,0,0.2)', padding: 32 }}>
+              <h2 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 22, marginBottom: 24 }}>Ringkasan Pesanan</h2>
+              <div className="divider-line" style={{ marginBottom: 24 }} />
+              {cart.map(item => (
+                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14, flex: 1, marginRight: 12 }}>{item.title} ×{item.qty}</span>
+                  <span style={{ fontFamily: 'Syne', fontWeight: 600, fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>${(item.price * item.qty).toLocaleString()}</span>
+                </div>
+              ))}
+              <div className="divider-line" style={{ margin: '20px 0' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 32 }}>
+                <span style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 18 }}>Total</span>
+                <span style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 24, color: 'var(--happy-yellow)' }}>${total.toLocaleString()}</span>
+              </div>
+              <button className="btn-primary" onClick={() => setShowCheckout(true)} style={{ width: '100%', fontSize: 15 }}>
+                <span>Lanjut ke Checkout →</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Checkout Form */}
+        {showCheckout && !successMsg && (
+          <div className="modal-overlay">
+            <div className="modal-box" style={{ padding: 40 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+                <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 26 }}>Detail <span style={{ color: 'var(--happy-yellow)' }}>Checkout</span></h2>
+                <button onClick={() => setShowCheckout(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 24 }}>×</button>
+              </div>
+              <form onSubmit={handleCheckout}>
+                {inputF('username', 'Username')}
+                {inputF('fullName', 'Nama Lengkap')}
+                {inputF('phone', 'Nomor Telepon', 'tel')}
+                {inputF('email', 'Alamat Email', 'email')}
+                {inputF('address', 'Alamat Rumah')}
+                {inputF('bankAccount', 'Nomor Rekening')}
+                <div style={{ background: 'rgba(255,208,0,0.05)', border: '1px solid rgba(255,208,0,0.2)', padding: '16px', marginBottom: 24 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: 'Syne', fontWeight: 600 }}>Total Pembayaran</span>
+                    <span style={{ fontFamily: 'Syne', fontWeight: 800, color: 'var(--happy-yellow)', fontSize: 20 }}>${total.toLocaleString()}</span>
+                  </div>
+                </div>
+                <button type="submit" className="btn-primary" style={{ width: '100%', fontSize: 15, padding: '16px' }}>
+                  <span>Konfirmasi Pembayaran →</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AdminPanel({ showToast }) {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  const [showModal, setShowModal] = useState(false);
+  const [editTarget, setEditTarget] = useState(null); // null = add, obj = edit
+  const [form, setForm] = useState({ title: '', price: '', description: '', categoryId: '1', images: '' });
+  const [formLoading, setFormLoading] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [search, setSearch] = useState('');
+
+  async function fetchProducts() {
+    setLoading(true); setError('');
+    try {
+      const offset = (page - 1) * limit;
+      const res = await fetch(`${API_BASE}/products?offset=${offset}&limit=${limit}`);
+      if (!res.ok) throw new Error();
+      setProducts(await res.json());
+    } catch {
+      setError('Gagal memuat produk');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { fetchProducts(); }, [page]);
+
+  function openAdd() {
+    setEditTarget(null);
+    setForm({ title: '', price: '', description: '', categoryId: '1', images: '' });
+    setShowModal(true);
+  }
+  function openEdit(p) {
+    setEditTarget(p);
+    setForm({
+      title: p.title || '',
+      price: String(p.price || ''),
+      description: p.description || '',
+      categoryId: String(p.category?.id || '1'),
+      images: Array.isArray(p.images) ? p.images[0] || '' : '',
+    });
+    setShowModal(true);
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!form.title.trim() || !form.price || !form.description.trim()) {
+      showToast('Semua field wajib diisi', 'error'); return;
+    }
+    setFormLoading(true);
+    const body = {
+      title: form.title,
+      price: Number(form.price),
+      description: form.description,
+      categoryId: Number(form.categoryId),
+      images: [form.images || 'https://placehold.co/600x400'],
+    };
+    try {
+      const url = editTarget ? `${API_BASE}/products/${editTarget.id}` : `${API_BASE}/products/`;
+      const method = editTarget ? 'PUT' : 'POST';
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error();
+      showToast(editTarget ? 'Produk berhasil diperbarui!' : 'Produk berhasil ditambahkan!', 'success');
+      setShowModal(false);
+      fetchProducts();
+    } catch {
+      showToast('Operasi gagal. Silakan coba lagi.', 'error');
+    } finally {
+      setFormLoading(false);
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      const res = await fetch(`${API_BASE}/products/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      showToast('Produk berhasil dihapus!', 'success');
+      setDeleteConfirm(null);
+      fetchProducts();
+    } catch {
+      showToast('Gagal menghapus produk.', 'error');
+    }
+  }
+
+  const filtered = products.filter(p =>
+    p.title?.toLowerCase().includes(search.toLowerCase()) ||
+    p.category?.name?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const formInput = (key, label, type = 'text', placeholder = '') => (
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ display: 'block', fontFamily: 'Syne', fontWeight: 600, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>{label}</label>
+      {key === 'description' ? (
+        <textarea className="form-input" value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} rows={3} style={{ resize: 'vertical' }} />
+      ) : (
+        <input className="form-input" type={type} value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} />
+      )}
+    </div>
+  );
+
+  return (
+    <div style={{ paddingTop: 70, minHeight: '100vh' }}>
+      {/* Header */}
+      <div style={{ padding: '40px', borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,208,0,0.03)' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
+          <div>
+            <div className="tag-pill" style={{ marginBottom: 12 }}>⚙️ Admin Panel</div>
+            <h1 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 'clamp(28px, 4vw, 48px)' }}>
+              Manajemen <span style={{ color: 'var(--happy-yellow)' }}>Produk</span>
+            </h1>
+          </div>
+          <button className="btn-primary" onClick={openAdd} style={{ fontSize: 14 }}>
+            <span>+ Tambah Produk</span>
+          </button>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 40px' }}>
+        {/* Stats bar */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 20, marginBottom: 36 }}>
+          {[
+            { label: 'Total Produk Dimuat', value: products.length, icon: '📦' },
+            { label: 'Halaman Saat Ini', value: `#${page}`, icon: '📄' },
+            { label: 'Hasil Pencarian', value: search ? filtered.length : '-', icon: '🔍' },
+          ].map((s, i) => (
+            <div key={i} style={{ background: 'var(--happy-dark2)', border: '1px solid rgba(255,255,255,0.06)', padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: 28 }}>{s.icon}</span>
+              <div>
+                <div style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 24, color: 'var(--happy-yellow)' }}>{s.value}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'Syne', fontWeight: 600 }}>{s.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Search */}
+        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 360 }}>
+          <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 16 }}>🔍</span>
+          <input className="form-input" value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari produk..." style={{ paddingLeft: 42 }} />
+        </div>
+
+        {/* Table */}
+        <div style={{ background: 'var(--happy-dark2)', border: '1px solid rgba(255,255,255,0.06)', overflowX: 'auto' }}>
+          {loading ? (
+            <div style={{ padding: 60, textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontFamily: 'Syne' }}>
+              <div style={{ fontSize: 40, marginBottom: 16 }}>⏳</div>
+              Memuat produk...
+            </div>
+          ) : error ? (
+            <div style={{ padding: 60, textAlign: 'center' }}>
+              <p style={{ color: '#FF2D55', marginBottom: 20 }}>{error}</p>
+              <button className="btn-primary" onClick={fetchProducts}><span>Coba Lagi</span></button>
+            </div>
+          ) : (
+            <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Gambar</th>
+                  <th>Judul</th>
+                  <th>Kategori</th>
+                  <th>Harga</th>
+                  <th>Deskripsi</th>
+                  <th style={{ textAlign: 'center' }}>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map(p => {
+                  const imgSrc = Array.isArray(p.images) && p.images[0]
+                    ? p.images[0].startsWith('[') ? 'https://placehold.co/60x60/1A1A1A/FFD000?text=P' : p.images[0]
+                    : 'https://placehold.co/60x60/1A1A1A/FFD000?text=P';
+                  return (
+                    <tr key={p.id}>
+                      <td style={{ fontFamily: 'Syne', fontWeight: 700, color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>#{p.id}</td>
+                      <td>
+                        <img src={imgSrc} alt={p.title} onError={e => e.target.src = 'https://placehold.co/60x60/1A1A1A/FFD000?text=P'} style={{ width: 60, height: 60, objectFit: 'cover' }} />
+                      </td>
+                      <td style={{ maxWidth: 200 }}>
+                        <div style={{ fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>{p.title}</div>
+                      </td>
+                      <td>
+                        <span style={{ background: 'rgba(255,208,0,0.1)', border: '1px solid rgba(255,208,0,0.2)', color: 'var(--happy-yellow)', fontFamily: 'Syne', fontSize: 11, fontWeight: 700, padding: '3px 10px', letterSpacing: '0.05em' }}>
+                          {p.category?.name || '-'}
+                        </span>
+                      </td>
+                      <td style={{ fontFamily: 'Syne', fontWeight: 700, color: 'var(--happy-yellow)' }}>${p.price?.toLocaleString()}</td>
+                      <td style={{ maxWidth: 200, color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>
+                        <div style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.description}</div>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                          <button onClick={() => openEdit(p)} style={{ background: 'rgba(255,208,0,0.1)', border: '1px solid rgba(255,208,0,0.3)', color: 'var(--happy-yellow)', padding: '6px 16px', fontFamily: 'Syne', fontWeight: 700, fontSize: 12, cursor: 'pointer', transition: 'all 0.2s' }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,208,0,0.2)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,208,0,0.1)'; }}>
+                            Edit
+                          </button>
+                          <button onClick={() => setDeleteConfirm(p)} style={{ background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.3)', color: '#FF2D55', padding: '6px 16px', fontFamily: 'Syne', fontWeight: 700, fontSize: 12, cursor: 'pointer', transition: 'all 0.2s' }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,45,85,0.2)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,45,85,0.1)'; }}>
+                            Hapus
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Pagination */}
+        {!search && !loading && !error && (
+          <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+            <button className="btn-outline" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: '10px 24px' }}>← Sebelumnya</button>
+            <div style={{ background: 'var(--happy-yellow)', color: 'var(--happy-dark)', fontFamily: 'Syne', fontWeight: 700, padding: '10px 20px', minWidth: 48, textAlign: 'center' }}>{page}</div>
+            <button className="btn-outline" onClick={() => setPage(p => p + 1)} disabled={products.length < limit} style={{ padding: '10px 24px' }}>Berikutnya →</button>
+          </div>
+        )}
+      </div>
+
+      {/* Add/Edit Modal */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-box animate-popIn" style={{ padding: 40 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+              <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 24 }}>
+                {editTarget ? 'Edit ' : 'Tambah '}<span style={{ color: 'var(--happy-yellow)' }}>Produk</span>
+              </h2>
+              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 24 }}>×</button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              {formInput('title', 'Judul Produk', 'text', 'Masukkan judul produk')}
+              {formInput('price', 'Harga ($)', 'number', 'Masukkan harga')}
+              {formInput('description', 'Deskripsi', 'text', 'Masukkan deskripsi produk')}
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: 'block', fontFamily: 'Syne', fontWeight: 600, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>Kategori ID</label>
+                <select className="form-input" value={form.categoryId} onChange={e => setForm(f => ({ ...f, categoryId: e.target.value }))} style={{ cursor: 'pointer' }}>
+                  {[1,2,3,4,5].map(id => <option key={id} value={id} style={{ background: '#1A1A1A' }}>Kategori {id}</option>)}
+                </select>
+              </div>
+              {formInput('images', 'URL Gambar', 'url', 'https://...')}
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button type="button" onClick={() => setShowModal(false)} className="btn-outline" style={{ flex: 1 }}>Batal</button>
+                <button type="submit" className="btn-primary" style={{ flex: 1 }} disabled={formLoading}>
+                  <span>{formLoading ? 'Menyimpan...' : editTarget ? 'Simpan Perubahan' : 'Tambah Produk'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirm */}
+      {deleteConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-box animate-popIn" style={{ padding: 40, textAlign: 'center' }}>
+            <div style={{ fontSize: 56, marginBottom: 20 }}>🗑️</div>
+            <h2 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 22, marginBottom: 12 }}>Hapus Produk?</h2>
+            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 15, marginBottom: 8 }}>Kamu yakin ingin menghapus:</p>
+            <p style={{ fontFamily: 'Syne', fontWeight: 700, color: 'var(--happy-yellow)', fontSize: 16, marginBottom: 32 }}>"{deleteConfirm.title}"</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setDeleteConfirm(null)} className="btn-outline" style={{ flex: 1 }}>Batal</button>
+              <button onClick={() => handleDelete(deleteConfirm.id)} style={{ flex: 1, background: '#FF2D55', color: 'white', border: 'none', fontFamily: 'Syne', fontWeight: 700, padding: '14px', cursor: 'pointer', fontSize: 14 }}>
+                Ya, Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [page, setPage] = useState('about');
+  const [cart, setCart] = useState([]);
+  const [toast, setToast] = useState(null);
+
+  function showToast(message, type = 'info') {
+    setToast({ message, type, key: Date.now() });
+  }
+
+  function handleLogin(u) {
+    setUser(u);
+    setPage(u.role === 'admin' ? 'admin' : 'about');
+  }
+
+  function handleLogout() {
+    setUser(null);
+    setCart([]);
+    setPage('about');
+  }
+
+  function handleAddToCart(product, qty) {
+    if (qty < 1) {
+      showToast('Jumlah harus lebih dari 0', 'error');
+      return;
+    }
+    setCart(prev => {
+      const existing = prev.find(i => i.id === product.id);
+      if (existing) {
+        showToast(`Jumlah ${product.title} diperbarui`, 'info');
+        return prev.map(i => i.id === product.id ? { ...i, qty: i.qty + qty } : i);
+      }
+      showToast(`${product.title} ditambahkan ke keranjang!`, 'success');
+      return [...prev, { ...product, qty }];
+    });
+  }
+
+  function handleCheckoutSuccess() {
+    setPage('about');
+    setCart([]);
+  }
+
+  const cartCount = cart.reduce((s, i) => s + i.qty, 0);
+
+  if (!user) return <LoginPage onLogin={handleLogin} />;
+
+  return (
+    <div>
+      <Navbar page={page} setPage={setPage} user={user} onLogout={handleLogout} cartCount={cartCount} />
+
+      {page === 'about' && <AboutPage />}
+      {page === 'products' && user.role === 'member' && <ProductsPage onAddToCart={handleAddToCart} />}
+      {page === 'cart' && user.role === 'member' && <CartPage cart={cart} setCart={setCart} user={user} onCheckoutSuccess={handleCheckoutSuccess} showToast={showToast} />}
+      {page === 'admin' && user.role === 'admin' && <AdminPanel showToast={showToast} />}
+
+      {/* Redirect admin away from member pages */}
+      {user.role === 'admin' && page !== 'admin' && (
+        <div style={{ paddingTop: 70, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 20 }}>
+          <div style={{ fontSize: 64 }}>🚫</div>
+          <h2 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 24 }}>Akses Ditolak</h2>
+          <p style={{ color: 'rgba(255,255,255,0.5)' }}>Admin hanya dapat mengakses Admin Panel.</p>
+          <button className="btn-primary" onClick={() => setPage('admin')}><span>Ke Admin Panel →</span></button>
+        </div>
+      )}
+
+      {toast && <Toast key={toast.key} message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
